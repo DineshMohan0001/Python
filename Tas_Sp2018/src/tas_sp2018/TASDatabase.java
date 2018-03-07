@@ -89,7 +89,7 @@ public class TASDatabase {
                 
                 
                 //Creates and populates the Punch object
-                finalPunch = new Punch(badgeid, termIDInt, punchtypeID);
+                finalPunch = new Punch(badgeid, termIDInt, punchtypeID, OGTS);
                 
                 
             }
@@ -107,7 +107,7 @@ public class TASDatabase {
         try{
             
             
-            ResultSet rs = stmt.executeQuery("SELECT * FROM badge WHERE id=" + id);
+            ResultSet rs = stmt.executeQuery("SELECT * FROM badge WHERE id='"+id+"'");
             if (rs != null){
                rs.next();
                String badge = rs.getString("id");
