@@ -17,6 +17,7 @@ public class Punch {
     private String sdf;
     private int eventtypeid;
     private int punchTypeId;
+    private Calendar cal;
 
     public Punch(int terminalId, String badgeId, int shiftId, long originalts, int eventtypeid) {
 
@@ -24,7 +25,7 @@ public class Punch {
         adjusted = new GregorianCalendar();
         originalts = (originalts * 1000);
         //adjustedts = (originalts * 1000);
-        original.setTimeInMillis(originalts);
+        //original.setTimeInMillis(originalts);
         //adjusted.setTimeInMillis(adjustedts);
         this.terminalId = terminalId;
         this.badgeId = badgeId;
@@ -34,7 +35,7 @@ public class Punch {
         sdf = new SimpleDateFormat("EEE MM/dd/YYYY HH:mm:ss").format(original.getTime()).toUpperCase();
     }
 	
-	public Punch(String badgeId, int terminalId, int punchTypeId){
+	public Punch(String badgeId, int terminalId, int punchTypeId, String timeStamp){
 
         this.badgeId = badgeId;
         this.terminalId = terminalId;
@@ -42,6 +43,21 @@ public class Punch {
         this.punchTypeId = punchTypeId;
         original = new GregorianCalendar();
         adjusted = new GregorianCalendar();
+        
+        
+        
+        SimpleDateFormat lmao = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss", Locale.US);
+        try{
+        Date d = lmao.parse(timeStamp);
+        //cal = new GregorianCalendar();
+        original.setTime(d);
+        
+        sdf = new SimpleDateFormat("EEE MM/dd/YYYY HH:mm:ss").format(original.getTime()).toUpperCase();
+        }
+        catch(Exception e){System.out.println(e);}
+        
+        
+        //sdf = new SimpleDateFormat("EEE MM/dd/YYYY HH:mm:ss").format(original.getTime()).toUpperCase();
     }
 	
     public String getPunchDescription() {
