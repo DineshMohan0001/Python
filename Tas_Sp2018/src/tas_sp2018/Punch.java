@@ -34,7 +34,7 @@ public class Punch {
         sdf = new SimpleDateFormat("EEE MM/dd/YYYY HH:mm:ss").format(original.getTime()).toUpperCase();
     }
 	
-	public Punch(String badgeId, int terminalId, int punchTypeId){
+	public Punch(String badgeId, int terminalId, int punchTypeId, String timeStamp){
 
         this.badgeId = badgeId;
         this.terminalId = terminalId;
@@ -42,8 +42,23 @@ public class Punch {
         this.punchTypeId = punchTypeId;
         original = new GregorianCalendar();
         adjusted = new GregorianCalendar();
+        
+    SimpleDateFormat lmao = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss", Locale.US); 
+
+    try{ 
+    Date d = lmao.parse(timeStamp); 
+
+    //cal = new GregorianCalendar(); 
+
+    original.setTime(d); 
+    sdf = new SimpleDateFormat("EEE MM/dd/YYYY HH:mm:ss").format(original.getTime()).toUpperCase(); 
+
     }
-	
+        
+    catch(Exception e){System.out.println(e);} 
+             
+      //sdf = new SimpleDateFormat("EEE MM/dd/YYYY HH:mm:ss").format(original.getTime()).toUpperCase();
+     }
     public String getPunchDescription() {
 
         return punchDescription;
@@ -93,19 +108,21 @@ public class Punch {
 
         return eventtypeid;
     }
-  private String getEventType(int eventTypeID) {
+public String printOriginalTimestamp() {
 
-        switch (eventTypeID) {
-            case 0:
-                return "CLOCKED OUT: ";
+        String Status = "";
 
-            case 1:
-                return "CLOCKED IN: ";
+        if (eventtypeid == 1) {
+            Status = " CLOCKED IN: ";
 
-            default:
-                return "TIMED OUT: ";
+        } else if (eventtypeid == 0) {
+            Status = " CLOCKED OUT: ";
+
+        } else {
+            Status = " TIMED OUT: ";
         }
-    }
 
+        return "#" + terminalId + badgeId + Status + sdf;
+    }
 }
    
