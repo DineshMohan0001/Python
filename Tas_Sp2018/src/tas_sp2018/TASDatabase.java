@@ -149,7 +149,7 @@ public class TASDatabase {
                 
                 
                 //Creates and populates the Shift object
-                finalShift = new Shift(id, start, stop, lunchStart, lunchStop);
+                finalShift = new Shift(desc, id, start, stop, lunchStart, lunchStop);
                 
             }
         }

@@ -1,22 +1,26 @@
 
 package tas_sp2018;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 
 public class Shift {
         private String id = null;
 	private String description = "";
-	private String start;
-        private String stop;
-        //private GregorianCalendar start;
-	//private GregorianCalendar stop;
+	//private String start;
+        //private String stop;
+        private GregorianCalendar start;
+	private GregorianCalendar stop;
 	private int interval = 0;
 	private int graceperiod = 0;
 	private int dock = 0;
-        private String lunchstart;
-        private String lunchstop;  
-        //private GregorianCalendar lunchstart;
-	//private GregorianCalendar lunchstop;
+        //private String lunchstart;
+        //private String lunchstop;  
+        private GregorianCalendar lunchstart;
+	private GregorianCalendar lunchstop;
 	private int lunchdeduct = 0;
 	
 	/* Default Constructor */
@@ -42,12 +46,30 @@ public class Shift {
 		
 	}
         */
-        public Shift(String id, String start, String stop, String lunchstart, String lunchstop){
+        public Shift(String desc,String id, String start, String stop, String lunchstart, String lunchstop){
+            
+            description = desc;
             this.id = id;
-            this.start = start;
-            this.stop = stop;
-            this.lunchstart = lunchstart;
-            this.lunchstop = lunchstop;
+            this.start = new GregorianCalendar();
+            this.stop = new GregorianCalendar();
+            this.lunchstart = new GregorianCalendar();
+            this.lunchstop = new GregorianCalendar();
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.US);
+            
+            try{
+                Date begin = sdf.parse(start);
+                Date end = sdf.parse(stop);
+                Date lunchbegin = sdf.parse(lunchstart);
+                Date lunchend = sdf.parse(lunchstop);
+                
+                this.start.setTime(begin);
+                this.stop.setTime(end);
+                this.lunchstart.setTime(lunchbegin);
+                this.lunchstop.setTime(lunchend);
+                
+                
+            }
+            catch(Exception e){System.out.println(e);}
         }
         
     public String getId() {
@@ -60,12 +82,12 @@ public class Shift {
     }
 
    
-    public String getStart() {
+    public GregorianCalendar getStart() {
         return start;
     }
 
    
-    public String getStop() {
+    public GregorianCalendar getStop() {
         return stop;
     }
 
@@ -85,12 +107,12 @@ public class Shift {
     }
 
     
-    public String getLunchstart() {
+    public GregorianCalendar getLunchstart() {
         return lunchstart;
     }
 
     
-    public String getLunchstop() {
+    public GregorianCalendar getLunchstop() {
         return lunchstop;
     }
 
@@ -110,12 +132,12 @@ public class Shift {
     }
 
     
-    public void setStart(String start) {
+    public void setStart(GregorianCalendar start) {
         this.start = start;
     }
 
     
-    public void setStop(String stop) {
+    public void setStop(GregorianCalendar stop) {
         this.stop = stop;
     }
 
@@ -135,12 +157,12 @@ public class Shift {
     }
 
     
-    public void setLunchstart(String lunchstart) {
+    public void setLunchstart(GregorianCalendar lunchstart) {
         this.lunchstart = lunchstart;
     }
 
     
-    public void setLunchstop(String lunchstop) {
+    public void setLunchstop(GregorianCalendar lunchstop) {
         this.lunchstop = lunchstop;
     }
 
@@ -149,8 +171,22 @@ public class Shift {
         this.lunchdeduct = lunchdeduct;
     }
 
+   
+    
     @Override
     public String toString(){
-        return "Shift " + id + ": " + start + " - " + stop + " (temp minutes); Lunch: " + lunchstart + " - " + lunchstop + "(temp minutes)";
+        
+        SimpleDateFormat f = new SimpleDateFormat("HH:mm");
+        
+        Date sStart = start.getTime();
+        Date sStop = stop.getTime();
+        Date lStart = lunchstart.getTime();
+        Date lStop = lunchstop.getTime();
+        
+        long sDiff = ((sStop.getTime() - sStart.getTime()) / (60 * 1000));
+        long lDiff = (lStop.getTime() - lStart.getTime()) / (60 * 1000) ;
+        
+        return description + ": " + f.format( start.getTime() ) +  " - " + f.format( stop.getTime() ) + " (" + sDiff +" minutes); Lunch: " + f.format(lunchstart.getTime() ) + " - " + 
+                f.format(lunchstop.getTime()) + " (" + lDiff + " minutes)";
     }
 }
