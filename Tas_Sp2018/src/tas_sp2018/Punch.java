@@ -17,13 +17,12 @@ public class Punch {
     private String sdf;
     private int eventtypeid;
     private int punchTypeId;
-    private Calendar cal;
 
     public Punch(int terminalId, String badgeId, int shiftId, long originalts, int eventtypeid) {
 
         original = new GregorianCalendar();
         adjusted = new GregorianCalendar();
-        originalts = (originalts * 1000);
+        //originalts = (originalts * 1000);
         //adjustedts = (originalts * 1000);
         //original.setTimeInMillis(originalts);
         //adjusted.setTimeInMillis(adjustedts);
@@ -44,22 +43,22 @@ public class Punch {
         original = new GregorianCalendar();
         adjusted = new GregorianCalendar();
         
-        
-        
-        SimpleDateFormat lmao = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss", Locale.US);
-        try{
-        Date d = lmao.parse(timeStamp);
-        //cal = new GregorianCalendar();
-        original.setTime(d);
-        
-        sdf = new SimpleDateFormat("EEE MM/dd/YYYY HH:mm:ss").format(original.getTime()).toUpperCase();
-        }
-        catch(Exception e){System.out.println(e);}
-        
-        
-        //sdf = new SimpleDateFormat("EEE MM/dd/YYYY HH:mm:ss").format(original.getTime()).toUpperCase();
+    SimpleDateFormat lmao = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss", Locale.US); 
+
+    try{ 
+    Date d = lmao.parse(timeStamp); 
+
+    //cal = new GregorianCalendar(); 
+
+    original.setTime(d); 
+    sdf = new SimpleDateFormat("EEE MM/dd/YYYY HH:mm:ss").format(original.getTime()).toUpperCase(); 
+
     }
-	
+        
+    catch(Exception e){System.out.println(e);} 
+             
+      //sdf = new SimpleDateFormat("EEE MM/dd/YYYY HH:mm:ss").format(original.getTime()).toUpperCase();
+     }
     public String getPunchDescription() {
 
         return punchDescription;
@@ -109,8 +108,7 @@ public class Punch {
 
         return eventtypeid;
     }
-
-    public String printOriginalTimestamp() {
+public String printOriginalTimestamp() {
 
         String Status = "";
 
@@ -124,6 +122,7 @@ public class Punch {
             Status = " TIMED OUT: ";
         }
 
-        return "#" + badgeId + Status + sdf;
+        return "#" + terminalId + badgeId + Status + sdf;
     }
 }
+   
