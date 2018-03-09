@@ -66,34 +66,36 @@ public class TASDatabase {
     public Punch getPunch(int punchid){
        String idString =  Integer.toString(punchid);
        
-       
+       String badgeid;
+       int termIDInt;
+
        //Query for Punch info
        try{
            //Query for Punch info
-            ResultSet rs = stmt.executeQuery("SELECT * FROM event WHERE id="+idString );
-            if (rs != null){
+            ResultSet rs = stmt.executeQuery("SELECT *, UNIX_TIMESTAMP(originaltimestamp) * 1000 AS `timestamp` FROM event WHERE id='"+idString +"'");
+            if (rs != null ){
                 rs.next();
                 String id = rs.getString("id");
                 String termID= rs.getString("terminalid");
-                String badgeid = rs.getString("badgeid");
+                badgeid = rs.getString("badgeid");
                 String OGTS = rs.getString("originaltimestamp");
                 String ETID= rs.getString("eventtypeid");
-                String evData= rs.getString("eventdata");
+                String evData = rs.getString("eventdata");
+                String longBoy = rs.getString("timestamp");
                 //String adjTS = rs.getString("adjustedtimestamp");
                 
                 //Converts query data into parameters for objects
-                //Badge punchBadge = getBadge(badgeid);
-                int termIDInt = Integer.parseInt(termID);
+
+                termIDInt = Integer.parseInt(termID);
                 int punchtypeID = Integer.parseInt(ETID);
-                //long ogts = Long.parseLong(OGTS);
+                long timeStamp = Long.parseLong(longBoy);
                 
                 
                 //Creates and populates the Punch object
-                finalPunch = new Punch(badgeid, termIDInt, punchtypeID, OGTS);
-                
-                
+                finalPunch = new Punch(badgeid, termIDInt, punchtypeID, timeStamp) ;
+                    
             }
-            
+                   
        }
        catch(Exception e){System.out.println(e);}
        
@@ -113,8 +115,6 @@ public class TASDatabase {
                String badge = rs.getString("id");
                String desc = rs.getString("description");
                
-               //Converts query data into parameters for objects
-               //int id2 = Integer.parseInt(badge);
                
                //Creates and populates the Badge object
                finalBadge = new Badge(desc, badge);
