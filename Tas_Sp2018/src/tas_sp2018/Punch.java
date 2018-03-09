@@ -34,7 +34,7 @@ public class Punch {
         sdf = new SimpleDateFormat("EEE MM/dd/YYYY HH:mm:ss").format(original.getTime()).toUpperCase();
     }
 	
-	public Punch(String badgeId, int terminalId, int punchTypeId, String timeStamp){
+	public Punch(String badgeId, int terminalId, int punchTypeId, long timeStamp){
 
         this.badgeId = badgeId;
         this.terminalId = terminalId;
@@ -42,20 +42,11 @@ public class Punch {
         this.punchTypeId = punchTypeId;
         original = new GregorianCalendar();
         adjusted = new GregorianCalendar();
+        long originalts = timeStamp;
+        original.setTimeInMillis(originalts);
         
-    SimpleDateFormat lmao = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss", Locale.US); 
 
-    try{ 
-    Date d = lmao.parse(timeStamp); 
-
-    //cal = new GregorianCalendar(); 
-
-    original.setTime(d); 
-    sdf = new SimpleDateFormat("EEE MM/dd/YYYY HH:mm:ss").format(original.getTime()).toUpperCase(); 
-
-    }
-        
-    catch(Exception e){System.out.println(e);} 
+        sdf = new SimpleDateFormat("EEE MM/dd/YYYY HH:mm:ss").format(original.getTime()).toUpperCase();
              
       //sdf = new SimpleDateFormat("EEE MM/dd/YYYY HH:mm:ss").format(original.getTime()).toUpperCase();
      }
@@ -122,7 +113,7 @@ public String printOriginalTimestamp() {
             Status = " TIMED OUT: ";
         }
 
-        return "#" + terminalId + badgeId + Status + sdf;
+        return "#" + badgeId + Status + sdf;
     }
 }
    
