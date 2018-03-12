@@ -1,7 +1,4 @@
-import edu.jsu.mcis.tas_sp18.Shift;
-import edu.jsu.mcis.tas_sp18.TASDatabase;
-import edu.jsu.mcis.tas_sp18.Punch;
-import edu.jsu.mcis.tas_sp18.Badge;
+package tas_sp2018;
 
 import org.junit.*;
 import static org.junit.Assert.*;
