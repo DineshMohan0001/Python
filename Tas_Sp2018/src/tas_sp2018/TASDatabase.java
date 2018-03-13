@@ -6,6 +6,7 @@
 package tas_sp2018;
 
 import java.sql.*;
+import java.util.*;
 /**
  *
  * @author Andrew
@@ -159,16 +160,29 @@ public class TASDatabase {
     }
     
     public Shift getShift(Badge badge){
-        
-       
+    String wuttup = badge.getId();
         
         try {
-            ResultSet rs = stmt.executeQuery("SELECT * FROM employee WHERE badgeid =" + badge);
+            ResultSet rs = stmt.executeQuery("SELECT * FROM employee WHERE badgeid ='" + wuttup + "'");
             if (rs != null){
+                rs.next();
+                String shiftid = rs.getString("shiftid");
+                
+                int lmao = Integer.parseInt(shiftid);
+                
+                finalShift = getShift(lmao);
+               
+                
             
             }
         }
         catch(Exception e){System.out.println(e);}
+        
+        return finalShift;
+    }
+    
+    public ArrayList getDailyPunchList (Badge b, GregorianCalendar ts){
+        
         
         return null;
     }
