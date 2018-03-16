@@ -17,6 +17,7 @@ public class Punch {
     private String sdf;
     private int eventtypeid;
     private int punchTypeId;
+    
 
     public Punch(int terminalId, String badgeId, int shiftId, long originalts, int eventtypeid) {
 
@@ -49,7 +50,14 @@ public class Punch {
         sdf = new SimpleDateFormat("EEE MM/dd/YYYY HH:mm:ss").format(original.getTime()).toUpperCase();
              
       //sdf = new SimpleDateFormat("EEE MM/dd/YYYY HH:mm:ss").format(original.getTime()).toUpperCase();
-     }
+      
+      public void adjust (Shift s) {
+          
+        GregorianCalendar lunchStart = new GregorianCalendar(original.get(Calendar.YEAR), original.get(Calendar.MONTH), original.get(Calendar.DAY_OF_MONTH), s.getLunchstart().getHours(), s.getLunchstart().getMinutes());
+        GregorianCalendar lunchStop = new GregorianCalendar(original.get(Calendar.YEAR), original.get(Calendar.MONTH), original.get(Calendar.DAY_OF_MONTH), s.getLunchstop().getHours(), s.getLunchstop().getMinutes());   
+  
+    }
+      
     public String getPunchDescription() {
 
         return punchDescription;
