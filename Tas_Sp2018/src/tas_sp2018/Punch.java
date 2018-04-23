@@ -55,6 +55,8 @@ public class Punch {
     
     public void adjust (Shift s) {
        //sets the shift date to the date of the punch for sake of comparison
+       adjusted = original;
+       
        s.getStart().set(Calendar.YEAR, original.get(Calendar.YEAR));
        s.getStart().set(Calendar.MONTH, original.get(Calendar.MONTH));
        s.getStart().set(Calendar.DAY_OF_MONTH, original.get(Calendar.DAY_OF_MONTH));
@@ -101,20 +103,24 @@ public class Punch {
         while(diffmins > s.getInterval()){
            diffmins -= s.getInterval();
        }
-       boolean isWeekend = dayofweeknum == 7 || dayofweeknum == 1;                                                     //check if its a weekend or not, specific rules do not apply to them
-       boolean onBorderline = original.compareTo(beforeShiftStart) == 0 || original.compareTo(beforeGraceStart) == 0 || 
-                              original.compareTo(afterStartDock) == 0 || original.compareTo(beforeStopDock) == 0 || 
-                              original.compareTo(beforeStopGrace) == 0 || original.compareTo(afterShiftStop) == 0;
+       boolean isWeekend = dayofweeknum == 7 || dayofweeknum == 1;          //check if its a weekend or not, specific rules do not apply to them
+       boolean beforeStartLine = original.compareTo(beforeShiftStart) == 0;
+       boolean startGraceLine = original.compareTo(beforeGraceStart) == 0;
+       boolean startDockLine = original.compareTo(afterStartDock) == 0;
+       boolean stopDockLine = original.compareTo(beforeStopDock) == 0;
+       boolean stopGraceLine = original.compareTo(beforeStopGrace) == 0;
+       boolean afterStopLine = original.compareTo(afterShiftStop) == 0;
        
-       if(original.before(s.getStart()) && original.after(beforeShiftStart) && !isWeekend){
+       
+       if(original.before(s.getStart()) && original.after(beforeShiftStart) && !isWeekend || beforeStartLine){
            adjusted.setTimeInMillis(s.getStart().getTimeInMillis());
            eventData = "(Shift Start)";
        }
-       else if(original.after(s.getStart()) && original.before(beforeGraceStart) && !isWeekend){
+       else if(original.after(s.getStart()) && original.before(beforeGraceStart) && !isWeekend || startGraceLine){
            adjusted.setTimeInMillis(s.getStart().getTimeInMillis());
            eventData = "(Shift Start)";
        }
-       else if(original.after(beforeGraceStart) && original.before(afterStartDock) && !isWeekend){
+       else if(original.after(beforeGraceStart) && original.before(afterStartDock) && !isWeekend || startDockLine){
            adjusted.setTimeInMillis(afterStartDock.getTimeInMillis());
            eventData = "(Shift Dock)";
        }
@@ -126,15 +132,15 @@ public class Punch {
            adjusted.setTimeInMillis(s.getLunchstop().getTimeInMillis());
            eventData = "(Lunch Stop)";
        }
-       else if(original.after(beforeStopDock) && original.before(beforeStopGrace) && !isWeekend || onBorderline){
+       else if(original.after(beforeStopDock) && original.before(beforeStopGrace) && !isWeekend || stopDockLine){
            adjusted.setTimeInMillis(beforeStopDock.getTimeInMillis());
            eventData = "(Shift Dock)";
        }
-       else if(original.after(beforeStopGrace) && original.before(s.getStop()) && !isWeekend){
+       else if(original.after(beforeStopGrace) && original.before(s.getStop()) && !isWeekend || stopGraceLine){
            adjusted.setTimeInMillis(s.getStop().getTimeInMillis());
            eventData = "(Shift Stop)";
        }
-       else if(original.after(s.getStop()) && original.before(afterShiftStop) && !isWeekend ){
+       else if(original.after(s.getStop()) && original.before(afterShiftStop) && !isWeekend || afterStopLine){
            adjusted.setTimeInMillis(s.getStop().getTimeInMillis());
            eventData = "(Shift Stop)";
        }
@@ -142,7 +148,7 @@ public class Punch {
           adjusted.setTimeInMillis(original.getTimeInMillis());
           eventData = "(None)";
        }
-       else if( diffmins <= Math.floor(s.getInterval() / 2) || isWeekend){
+       else if( diffmins <= Math.floor(s.getInterval() / 2) ){
             if(diffmins == Math.floor(s.getInterval() / 2) && original.get(Calendar.SECOND) != 0){
                 adjusted.setTimeInMillis(original.getTimeInMillis());
                 adjusted.add(Calendar.MINUTE, (s.getInterval() - diffmins));
@@ -156,7 +162,7 @@ public class Punch {
                 eventData = "(Interval Round)";
             }
         }
-       else if(diffmins > Math.floor(s.getInterval() / 2) || isWeekend){
+       else if(diffmins > Math.floor(s.getInterval() / 2)){
             adjusted.setTimeInMillis(original.getTimeInMillis());
             adjusted.add(Calendar.MINUTE, (s.getInterval() - diffmins));
             adjusted.set(Calendar.SECOND, 0);

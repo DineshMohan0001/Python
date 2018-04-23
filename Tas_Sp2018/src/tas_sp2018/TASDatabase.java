@@ -6,6 +6,7 @@
 package tas_sp2018;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 /**
  *
@@ -21,7 +22,9 @@ public class TASDatabase {
     private Badge finalBadge = new Badge();
     private Shift finalShift = new Shift();
     static Statement stmt;
-    
+    /*I initialized the connection here instead of the constructor so that I can use it in the insertPunch 
+    method hopefully it won't break anything -Chris*/
+    private Connection con;
     public static void main(String[] args) {
   
     }
@@ -32,7 +35,6 @@ public class TASDatabase {
         //Opens the connection to the database and creates a statement for interacting with it
         
         String url = null;
-        Connection con;
         
         try{
             Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -79,17 +81,17 @@ public class TASDatabase {
                 String id = rs.getString("id");
                 String termID= rs.getString("terminalid");
                 badgeid = rs.getString("badgeid");
-                String OGTS = rs.getString("originaltimestamp");
-                String ETID= rs.getString("eventtypeid");
+                String originalTS = rs.getString("originaltimestamp");
+                String eventID= rs.getString("eventtypeid");
                 String evData = rs.getString("eventdata");
-                String longBoy = rs.getString("timestamp");
-                //String adjTS = rs.getString("adjustedtimestamp");
+                String longTimeStamp = rs.getString("timestamp");
+                //String adjustedTS = rs.getString("adjustedtimestamp");
                 
                 //Converts query data into parameters for objects
 
                 termIDInt = Integer.parseInt(termID);
-                int punchtypeID = Integer.parseInt(ETID);
-                long timeStamp = Long.parseLong(longBoy);
+                int punchtypeID = Integer.parseInt(eventID);
+                long timeStamp = Long.parseLong(longTimeStamp);
                 
                 
                 //Creates and populates the Punch object
@@ -150,7 +152,7 @@ public class TASDatabase {
                 
                 
                 //Creates and populates the Shift object
-                finalShift = new Shift(desc, id, start, stop, lunchStart, lunchStop);
+                finalShift = new Shift(id, desc, start, stop, interval, GP, dock, lunchStart, lunchStop, lunchDe);
                 
             }
         }
@@ -160,17 +162,17 @@ public class TASDatabase {
     }
     
     public Shift getShift(Badge badge){
-    String wuttup = badge.getId();
+    String badgeID = badge.getId();
         
         try {
-            ResultSet rs = stmt.executeQuery("SELECT * FROM employee WHERE badgeid ='" + wuttup + "'");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM employee WHERE badgeid ='" + badgeID + "'");
             if (rs != null){
                 rs.next();
                 String shiftid = rs.getString("shiftid");
                 
-                int lmao = Integer.parseInt(shiftid);
+                int intShiftID = Integer.parseInt(shiftid);
                 
-                finalShift = getShift(lmao);
+                finalShift = getShift(intShiftID);
                
                 
             
@@ -183,7 +185,83 @@ public class TASDatabase {
     
     public ArrayList getDailyPunchList (Badge b, GregorianCalendar ts){
         
+        //Step 2: Make a query for records of the punches for the Badge //Problem 1: How to pull punches for the Badge for specific dates
+        //Step 3: Put punches into finalList
         
-        return null;
+        ArrayList finalList = new ArrayList();
+        
+        //Step 1
+        GregorianCalendar start = new GregorianCalendar();
+        start.setTimeInMillis(ts.getTimeInMillis());
+        start.set(Calendar.HOUR, 0);
+        start.set(Calendar.MINUTE, 0);
+        start.set(Calendar.SECOND, 0);
+        //Initialize a stop
+        GregorianCalendar stop = new GregorianCalendar();
+        stop.setTimeInMillis(ts.getTimeInMillis());
+        stop.set(Calendar.HOUR, 23);
+        stop.set(Calendar.MINUTE, 59);
+        stop.set(Calendar.SECOND, 59);
+
+      //Step 2
+        String badgeid = b.getId();
+        
+        try{
+            ResultSet rs = stmt.executeQuery("SELECT * FROM event WHERE UNIX_TIMESTAMP(originaltimestamp) >= (start.getTimeInMillis() / 1000) "
+                    + "AND UNIX_TIMESTAMP(originaltimestamp) <= (stop.getTimeInMillis()/1000) AND"
+                    + " badgeid='"+badgeid+"' AND ORDER BY originaltimestamp");
+            
+            //Step 3
+            int columnCount = rs.getMetaData().getColumnCount();
+            while(rs.next()){
+                String[] row = new String[columnCount];
+                for(int i=0; i < columnCount; i++){
+                    row[i] = rs.getString(i + 1);
+                }
+                finalList.add(row);
+            }
+        }
+        catch(Exception e){System.out.println(e);}
+        
+        return finalList;
+    }
+    
+    public int insertPunch(Punch punch){
+        //Initializing and prepping variables
+        int newPunchId= 0 ;
+        GregorianCalendar cal = punch.getOriginaltimestamp();
+        int rs = 0;
+        cal.setTimeInMillis(cal.getTimeInMillis());
+       
+        //format query to be inserted into database
+        String query= "INSERT INTO event (id,terminalid,badgeid,originaltimestamp,eventtypeid,eventdata) VALUES(?,?,?,?,?,?)";                           
+        //insert values into query
+        try{
+            Statement stmnt= con.createStatement();
+            PreparedStatement ps = con.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
+            ps.setString(1, punch.getPunchId());
+            ps.setString(2, Integer.toString(punch.getTerminalid()));
+            ps.setString(3, punch.getBadgeid());
+            ps.setString(4, (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(cal.getTime()).toUpperCase() );
+            ps.setString(5, Integer.toString(punch.geteventtypeid()));
+            ps.setString(6, null);
+            
+            
+            //this should update the database making the new punch the 1st item in the event section
+            rs = ps.executeUpdate();
+            ResultSet result;
+            //if results exist, assign the punchId in row#1 col#1 to newPunchId
+            if (rs ==  1){
+                //row #1
+                result = ps.getGeneratedKeys();
+                //column #1
+                if (result.next()){
+                newPunchId=result.getInt(1);
+                }
+            }
+        } 
+        catch (Exception e){System.out.println(e);}
+        return newPunchId;
+        
     }
 }

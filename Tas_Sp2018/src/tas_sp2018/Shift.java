@@ -10,42 +10,54 @@ import java.util.Locale;
 public class Shift {
         private String id = null;
 	private String description = "";
-	//private String start;
-        //private String stop;
         private GregorianCalendar start;
 	private GregorianCalendar stop;
-	private int interval = 0;
-	private int graceperiod = 0;
-	private int dock = 0;
-        //private String lunchstart;
-        //private String lunchstop;  
+	private int interval;
+	private int graceperiod;
+	private int dock;  
         private GregorianCalendar lunchstart;
 	private GregorianCalendar lunchstop;
 	private int lunchdeduct = 0;
 	
 	/* Default Constructor */
 	public Shift(){
-		//start = new GregorianCalendar();
 		
 	}
-        /*
-	public Shift(int id, String description, GregorianCalendar start, GregorianCalendar stop, 
-				 int interval, int graceperiod, int dock, GregorianCalendar lunchstart, 
-				 GregorianCalendar lunchstop, int lunchdeduct){
+        
+	public Shift(String id, String description, String start, String stop, 
+				 String interval, String graceperiod, String dock, String lunchstart, 
+				 String lunchstop, String lunchdeduct){
 		
 		this.id = id;
 		this.description = description;
-		this.start = start;
-		this.stop = stop;
-		this.interval = interval;
-		this.graceperiod = graceperiod;
-		this.dock = dock;
-		this.lunchstart = lunchstart;
-		this.lunchstop = lunchstop;
-		this.lunchdeduct = lunchdeduct;
+		this.start = new GregorianCalendar();
+		this.stop = new GregorianCalendar();
+		this.interval = Integer.parseInt(interval);
+		this.graceperiod = Integer.parseInt(graceperiod);
+		this.dock = Integer.parseInt(dock);
+		this.lunchstart = new GregorianCalendar();
+		this.lunchstop = new GregorianCalendar();
+		this.lunchdeduct = Integer.parseInt(lunchdeduct);
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.US);
+                
+                try{
+                  
+                    Date begin = sdf.parse(start);
+                    Date end = sdf.parse(stop);
+                    Date lunchbegin = sdf.parse(lunchstart);
+                    Date lunchend = sdf.parse(lunchstop);
+                
+                    this.start.setTime(begin);
+                    this.stop.setTime(end);
+                    this.lunchstart.setTime(lunchbegin);
+                    this.lunchstop.setTime(lunchend);
+                
+                
+            }
+            catch(Exception e){System.out.println(e);}
 		
 	}
-        */
+        
         public Shift(String desc,String id, String start, String stop, String lunchstart, String lunchstop){
             
             description = desc;
@@ -97,7 +109,7 @@ public class Shift {
     }
 
     
-    public int getGraceperiod() {
+    public int getGracePeriod() {
         return graceperiod;
     }
 
