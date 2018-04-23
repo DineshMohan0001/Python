@@ -25,9 +25,6 @@ public class TASDatabase {
     /*I initialized the connection here instead of the constructor so that I can use it in the insertPunch 
     method hopefully it won't break anything -Chris*/
     private Connection con;
-    public static void main(String[] args) {
-  
-    }
     
     
     public TASDatabase(){
@@ -229,7 +226,7 @@ public class TASDatabase {
     public int insertPunch(Punch punch){
         //Initializing and prepping variables
         int newPunchId= 0 ;
-        GregorianCalendar cal = punch.getOriginaltimestamp();
+        GregorianCalendar cal = punch.getOriginalTimeStamp();
         int rs = 0;
         cal.setTimeInMillis(cal.getTimeInMillis());
        
@@ -240,8 +237,8 @@ public class TASDatabase {
             Statement stmnt= con.createStatement();
             PreparedStatement ps = con.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setString(1, punch.getPunchId());
-            ps.setString(2, Integer.toString(punch.getTerminalid()));
-            ps.setString(3, punch.getBadgeid());
+            ps.setString(2, Integer.toString(punch.getTerminalId()));
+            ps.setString(3, punch.getBadgeId());
             ps.setString(4, (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(cal.getTime()).toUpperCase() );
             ps.setString(5, Integer.toString(punch.geteventtypeid()));
             ps.setString(6, null);
