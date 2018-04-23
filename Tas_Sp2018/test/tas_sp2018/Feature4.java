@@ -1,3 +1,5 @@
+package tas_sp2018;
+
 import java.util.ArrayList;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -17,10 +19,10 @@ public class Feature4 {
         /* Get Punch */
         
         Punch p = db.getPunch(3634);
-        Badge b = db.getBadge(p.getBadgeid());
+        Badge b = db.getBadge(p.getBadgeId());
         Shift s = db.getShift(b);
         
-        ArrayList<Punch> dailypunchlist = db.getDailyPunchList(b, p.getOriginaltimestamp());
+        ArrayList<Punch> dailypunchlist = db.getDailyPunchList(b, p.getOriginalTimeStamp());
 		
         /* Compute Pay Period Total */
         
@@ -38,10 +40,10 @@ public class Feature4 {
         /* Get Punch */
         
         Punch p = db.getPunch(1087);
-        Badge b = db.getBadge(p.getBadgeid());
+        Badge b = db.getBadge(p.getBadgeId());
         Shift s = db.getShift(b);
         
-        ArrayList<Punch> dailypunchlist = db.getDailyPunchList(b, p.getOriginaltimestamp());
+        ArrayList<Punch> dailypunchlist = db.getDailyPunchList(b, p.getOriginalTimeStamp());
 		
         /* Compute Pay Period Total */
         
@@ -59,10 +61,10 @@ public class Feature4 {
         /* Get Punch */
         
         Punch p = db.getPunch(4943);
-        Badge b = db.getBadge(p.getBadgeid());
+        Badge b = db.getBadge(p.getBadgeId());
         Shift s = db.getShift(b);
         
-        ArrayList<Punch> dailypunchlist = db.getDailyPunchList(b, p.getOriginaltimestamp());
+        ArrayList<Punch> dailypunchlist = db.getDailyPunchList(b, p.getOriginalTimeStamp());
         
         /* Compute Pay Period Total */
         

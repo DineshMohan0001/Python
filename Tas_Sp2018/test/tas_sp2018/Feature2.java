@@ -1,3 +1,5 @@
+package tas_sp2018;
+
 import java.text.SimpleDateFormat;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -20,10 +22,10 @@ public class Feature2 {
 		
         /* Get Punch Properties */
         
-        String badgeid = p1.getBadgeid();
-        String originaltimestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(p1.getOriginaltimestamp().getTime());
-        int terminalid = p1.getTerminalid();
-        int eventtypeid = p1.getPunchtypeid();
+        String badgeid = p1.getBadgeId();
+        String originaltimestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(p1.getOriginalTimeStamp().getTime());
+        int terminalid = p1.getTerminalId();
+        int eventtypeid = p1.getPunchTypeId();
 		
         /* Insert Punch Into Database */
         
@@ -35,10 +37,10 @@ public class Feature2 {
 		
         /* Compare Punches */
 
-        assertEquals(badgeid, p2.getBadgeid());
-        assertEquals(originaltimestamp, (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(p2.getOriginaltimestamp().getTime()));
-        assertEquals(terminalid, p2.getTerminalid());
-        assertEquals(eventtypeid, p2.getPunchtypeid());
+        assertEquals(badgeid, p2.getBadgeId());
+        assertEquals(originaltimestamp, (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(p2.getOriginalTimeStamp().getTime()));
+        assertEquals(terminalid, p2.getTerminalId());
+        assertEquals(eventtypeid, p2.getPunchTypeId());
         
     }
 

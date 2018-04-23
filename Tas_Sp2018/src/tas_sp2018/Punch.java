@@ -15,12 +15,12 @@ public class Punch {
     private GregorianCalendar original;
     private GregorianCalendar adjusted;
     private String sdf;
-    private int eventtypeid;
+  //  private int punchTypeId;
     private int punchTypeId;
     private String eventData;
     
 
-    public Punch(int terminalId, String badgeId, int shiftId, long originalts, int eventtypeid) {
+    public Punch(int terminalId, String badgeId, int shiftId, long originalts, int punchTypeId) {
 
         original = new GregorianCalendar();
         adjusted = new GregorianCalendar();
@@ -31,7 +31,7 @@ public class Punch {
         this.terminalId = terminalId;
         this.badgeId = badgeId;
         this.shiftId = shiftId;
-        this.eventtypeid = eventtypeid;
+        this.punchTypeId = punchTypeId;
 
         sdf = new SimpleDateFormat("EEE MM/dd/YYYY HH:mm:ss").format(original.getTime()).toUpperCase();
     }
@@ -40,7 +40,6 @@ public class Punch {
 
         this.badgeId = badgeId;
         this.terminalId = terminalId;
-        this.eventtypeid = punchTypeId;
         this.punchTypeId = punchTypeId;
         original = new GregorianCalendar();
         adjusted = new GregorianCalendar();
@@ -51,6 +50,13 @@ public class Punch {
         sdf = new SimpleDateFormat("EEE MM/dd/YYYY HH:mm:ss").format(original.getTime()).toUpperCase();
              
       //sdf = new SimpleDateFormat("EEE MM/dd/YYYY HH:mm:ss").format(original.getTime()).toUpperCase();
+    }
+    
+    public Punch(String badgeId, int terminalid, int punchTypeId){
+        this.badgeId = badgeId;
+        this.terminalId = terminalid;
+        this.punchTypeId = punchTypeId;
+        original = new GregorianCalendar();
     }
     
     public void adjust (Shift s) {
@@ -124,11 +130,11 @@ public class Punch {
            adjusted.setTimeInMillis(afterStartDock.getTimeInMillis());
            eventData = "(Shift Dock)";
        }
-       else if(original.after(s.getLunchstart()) && original.before(s.getLunchstop()) && eventtypeid == 0 && !isWeekend){
+       else if(original.after(s.getLunchstart()) && original.before(s.getLunchstop()) && punchTypeId == 0 && !isWeekend){
            adjusted.setTimeInMillis(s.getLunchstart().getTimeInMillis());
            eventData = "(Lunch Start)";
        }
-       else if(original.after(s.getLunchstart()) && original.before(s.getLunchstop()) && eventtypeid == 1 && !isWeekend){
+       else if(original.after(s.getLunchstart()) && original.before(s.getLunchstop()) && punchTypeId == 1 && !isWeekend){
            adjusted.setTimeInMillis(s.getLunchstop().getTimeInMillis());
            eventData = "(Lunch Stop)";
        }
@@ -207,7 +213,7 @@ public class Punch {
 
     public GregorianCalendar getOriginalTimeStamp() {
 
-        return adjusted;
+        return original;
     }
 
     public GregorianCalendar getAdjustedTimeStamp() {
@@ -215,12 +221,10 @@ public class Punch {
         return adjusted;
     }
 
-    public int geteventtypeid(){
-
-        return eventtypeid;
+    public int getPunchTypeId() {
+        
+        return punchTypeId;
     }
-
-    
     public String printAdjustedTimestamp(){
     
         
@@ -228,10 +232,10 @@ public class Punch {
      
         String Status = "";
 
-       if (eventtypeid == 1) {
+       if (punchTypeId == 1) {
             Status = " CLOCKED IN: ";
 
-        } else if (eventtypeid == 0) {
+        } else if (punchTypeId == 0) {
             Status = " CLOCKED OUT: ";
 
         } else {
@@ -246,10 +250,10 @@ public class Punch {
 
         String Status = "";
 
-        if (eventtypeid == 1) {
+        if (punchTypeId == 1) {
             Status = " CLOCKED IN: ";
 
-        } else if (eventtypeid == 0) {
+        } else if (punchTypeId == 0) {
             Status = " CLOCKED OUT: ";
 
         } else {

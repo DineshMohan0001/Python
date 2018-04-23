@@ -237,10 +237,10 @@ public class TASDatabase {
             Statement stmnt= con.createStatement();
             PreparedStatement ps = con.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setString(1, punch.getPunchId());
-            ps.setString(2, Integer.toString(punch.getTerminalId()));
+            ps.setInt(2, (punch.getTerminalId()));
             ps.setString(3, punch.getBadgeId());
             ps.setString(4, (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(cal.getTime()).toUpperCase() );
-            ps.setString(5, Integer.toString(punch.geteventtypeid()));
+            ps.setInt(5, (punch.getPunchTypeId()));
             ps.setString(6, null);
             
             
