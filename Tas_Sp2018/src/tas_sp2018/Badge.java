@@ -1,13 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package tas_sp2018;
-//
+
 /**
- *
- * @author Andrew
+ * Represents the Badge used for identification for each employee
+ * 
+ * @author Shauntara Green, Andrew Blair, Jacob O'Dell, Derrick Godwin, Zeth Malcom
  */
 public class Badge {
            private String description;
