@@ -1,12 +1,15 @@
-
 package tas_sp2018;
-import java.text.DecimalFormat;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-
+/**
+ * Represents the shift and all of the relevant information for it
+ * 
+ * @author Shauntara Green, Andrew Blair, Jacob O'Dell, Derrick Godwin, Zeth Malcom
+ */
 public class Shift {
         private String id = null;
 	private String description = "";
@@ -19,7 +22,7 @@ public class Shift {
 	private GregorianCalendar lunchstop;
 	private int lunchdeduct = 0;
 	
-	/* Default Constructor */
+	// Default Constructor
 	public Shift(){
 		
 	}
@@ -198,7 +201,8 @@ public class Shift {
         long sDiff = ((sStop.getTime() - sStart.getTime()) / (60 * 1000));
         long lDiff = (lStop.getTime() - lStart.getTime()) / (60 * 1000) ;
         
-        return description + ": " + f.format( start.getTime() ) +  " - " + f.format( stop.getTime() ) + " (" + sDiff +" minutes); Lunch: " + f.format(lunchstart.getTime() ) + " - " + 
-                f.format(lunchstop.getTime()) + " (" + lDiff + " minutes)";
+        return description + ": " + f.format(start.getTime()) +  " - " + f.format(stop.getTime()) + 
+                           " (" + sDiff +" minutes); Lunch: " + f.format(lunchstart.getTime()) + " - " + 
+                           f.format(lunchstop.getTime()) + " (" + lDiff + " minutes)";
     }
 }

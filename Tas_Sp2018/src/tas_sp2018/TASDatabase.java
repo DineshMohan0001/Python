@@ -1,37 +1,33 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package tas_sp2018;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 /**
- *
- * @author Andrew
+ * Accesses and inserts information from the database
+ * 
+ * @author Shauntara Green, Andrew Blair, Jacob O'Dell, Derrick Godwin, Zeth Malcom
  */
-
-
 public class TASDatabase {
-    
     
     //Initialization of objects needed in the "get" methods and creation of a statement
     private Punch finalPunch = new Punch();
     private Badge finalBadge = new Badge();
     private Shift finalShift = new Shift();
     static Statement stmt;
-    /*I initialized the connection here instead of the constructor so that I can use it in the insertPunch 
-    method hopefully it won't break anything -Chris*/
     private Connection con;
     
-    
     public TASDatabase(){
-        
         //Opens the connection to the database and creates a statement for interacting with it
-        
-        String url = null;
+        String url;
         
         try{
             Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -46,21 +42,19 @@ public class TASDatabase {
     public void closeCon(Connection con){
         
         //Closes the connection to the database
-        
         try{
             con.close();
         }
-        catch(Exception e){System.out.println(e);}
+        catch(SQLException e){System.out.println(e);}
     }
     
     public void closeStmt(Statement stmt){
         
         //Closes the statement
-        
         try{
             stmt.close();
         }
-        catch(Exception e){System.out.println(e);}
+        catch(SQLException e){System.out.println(e);}
     }
     
     public Punch getPunch(int punchid){
@@ -71,7 +65,6 @@ public class TASDatabase {
 
        //Query for Punch info
        try{
-           //Query for Punch info
             ResultSet rs = stmt.executeQuery("SELECT *, UNIX_TIMESTAMP(originaltimestamp) * 1000 AS `timestamp` FROM event WHERE id='"+idString +"'");
             if (rs != null ){
                 rs.next();
@@ -82,14 +75,11 @@ public class TASDatabase {
                 String eventID= rs.getString("eventtypeid");
                 String evData = rs.getString("eventdata");
                 String longTimeStamp = rs.getString("timestamp");
-                //String adjustedTS = rs.getString("adjustedtimestamp");
                 
                 //Converts query data into parameters for objects
-
                 termIDInt = Integer.parseInt(termID);
                 int punchtypeID = Integer.parseInt(eventID);
                 long timeStamp = Long.parseLong(longTimeStamp);
-                
                 
                 //Creates and populates the Punch object
                 finalPunch = new Punch(badgeid, termIDInt, punchtypeID, timeStamp) ;
@@ -104,7 +94,6 @@ public class TASDatabase {
     
     public Badge getBadge(String id){
         
-        
         //Query for the badge info
         try{
             
@@ -115,13 +104,12 @@ public class TASDatabase {
                String badge = rs.getString("id");
                String desc = rs.getString("description");
                
-               
                //Creates and populates the Badge object
                finalBadge = new Badge(desc, badge);
                
             }
         }
-        catch(Exception e){System.out.println(e);}
+        catch(SQLException e){System.out.println(e);}
         
         return finalBadge;
     }
@@ -144,16 +132,13 @@ public class TASDatabase {
                 String lunchStart = rs.getString("lunchstart");
                 String lunchStop = rs.getString("lunchstop");
                 String lunchDe= rs.getString("lunchdeduct");
-                //String maxTime= rs.getString("maxtime");
-                //String OTHold= rs.getString("overtimethreshold");
-                
-                
+
                 //Creates and populates the Shift object
                 finalShift = new Shift(id, desc, start, stop, interval, GP, dock, lunchStart, lunchStop, lunchDe);
                 
             }
         }
-        catch(Exception e){System.out.println(e);}
+        catch(SQLException e){System.out.println(e);}
         
         return finalShift;
     }
@@ -170,9 +155,6 @@ public class TASDatabase {
                 int intShiftID = Integer.parseInt(shiftid);
                 
                 finalShift = getShift(intShiftID);
-               
-                
-            
             }
         }
         catch(Exception e){System.out.println(e);}
@@ -182,17 +164,14 @@ public class TASDatabase {
     
     public ArrayList getDailyPunchList (Badge b, GregorianCalendar ts){
         
-        //Step 2: Make a query for records of the punches for the Badge //Problem 1: How to pull punches for the Badge for specific dates
-        //Step 3: Put punches into finalList
-        
         ArrayList finalList = new ArrayList();
         
-        //Step 1
         GregorianCalendar start = new GregorianCalendar();
         start.setTimeInMillis(ts.getTimeInMillis());
         start.set(Calendar.HOUR, 0);
         start.set(Calendar.MINUTE, 0);
         start.set(Calendar.SECOND, 0);
+        
         //Initialize a stop
         GregorianCalendar stop = new GregorianCalendar();
         stop.setTimeInMillis(ts.getTimeInMillis());
@@ -200,15 +179,12 @@ public class TASDatabase {
         stop.set(Calendar.MINUTE, 59);
         stop.set(Calendar.SECOND, 59);
 
-      //Step 2
         String badgeid = b.getId();
-        
         try{
             ResultSet rs = stmt.executeQuery("SELECT * FROM event WHERE UNIX_TIMESTAMP(originaltimestamp) >= (start.getTimeInMillis() / 1000) "
                     + "AND UNIX_TIMESTAMP(originaltimestamp) <= (stop.getTimeInMillis()/1000) AND"
                     + " badgeid='"+badgeid+"' AND ORDER BY originaltimestamp");
             
-            //Step 3
             int columnCount = rs.getMetaData().getColumnCount();
             while(rs.next()){
                 String[] row = new String[columnCount];
@@ -224,6 +200,7 @@ public class TASDatabase {
     }
     
     public int insertPunch(Punch punch){
+        
         //Initializing and prepping variables
         int newPunchId= 0 ;
         GregorianCalendar cal = punch.getOriginalTimeStamp();
@@ -231,7 +208,8 @@ public class TASDatabase {
         cal.setTimeInMillis(cal.getTimeInMillis());
        
         //format query to be inserted into database
-        String query= "INSERT INTO event (id,terminalid,badgeid,originaltimestamp,eventtypeid,eventdata) VALUES(?,?,?,?,?,?)";                           
+        String query= "INSERT INTO event (id,terminalid,badgeid,originaltimestamp,eventtypeid,eventdata) VALUES(?,?,?,?,?,?)";
+        
         //insert values into query
         try{
             Statement stmnt= con.createStatement();
@@ -243,22 +221,22 @@ public class TASDatabase {
             ps.setInt(5, (punch.getPunchTypeId()));
             ps.setString(6, null);
             
-            
             //this should update the database making the new punch the 1st item in the event section
             rs = ps.executeUpdate();
             ResultSet result;
+            
             //if results exist, assign the punchId in row#1 col#1 to newPunchId
             if (rs ==  1){
                 //row #1
                 result = ps.getGeneratedKeys();
                 //column #1
                 if (result.next()){
-                newPunchId=result.getInt(1);
+                    newPunchId = result.getInt(1);
                 }
             }
         } 
-        catch (Exception e){System.out.println(e);}
-        return newPunchId;
+        catch (SQLException e){System.out.println(e);}
         
+        return newPunchId;
     }
 }

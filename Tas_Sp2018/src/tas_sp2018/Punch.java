@@ -1,8 +1,15 @@
 package tas_sp2018;
 
-import java.util.*;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
+/**
+ * Used to represent the punches made by employees on a time clock, and to adjust
+ * them when needed
+ * 
+ * @author Shauntara Green, Andrew Blair, Jacob O'Dell, Derrick Godwin, Zeth Malcom
+ */
 public class Punch {
 
     public Punch(){}
@@ -15,7 +22,6 @@ public class Punch {
     private GregorianCalendar original;
     private GregorianCalendar adjusted;
     private String sdf;
-  //  private int punchTypeId;
     private int punchTypeId;
     private String eventData;
     
@@ -24,10 +30,6 @@ public class Punch {
 
         original = new GregorianCalendar();
         adjusted = new GregorianCalendar();
-        //originalts = (originalts * 1000);
-        //adjustedts = (originalts * 1000);
-        //original.setTimeInMillis(originalts);
-        //adjusted.setTimeInMillis(adjustedts);
         this.terminalId = terminalId;
         this.badgeId = badgeId;
         this.shiftId = shiftId;
@@ -48,8 +50,6 @@ public class Punch {
         
 
         sdf = new SimpleDateFormat("EEE MM/dd/YYYY HH:mm:ss").format(original.getTime()).toUpperCase();
-             
-      //sdf = new SimpleDateFormat("EEE MM/dd/YYYY HH:mm:ss").format(original.getTime()).toUpperCase();
     }
     
     public Punch(String badgeId, int terminalid, int punchTypeId){
@@ -76,7 +76,7 @@ public class Punch {
        s.getLunchstop().set(Calendar.MONTH, original.get(Calendar.MONTH));
        s.getLunchstop().set(Calendar.DAY_OF_MONTH, original.get(Calendar.DAY_OF_MONTH));
        
-        /*Each calendar represents the bounds for the critical zones*/
+       //Each calendar represents the bounds for the critical zones
        GregorianCalendar beforeShiftStart = new GregorianCalendar();
        beforeShiftStart.setTimeInMillis(s.getStart().getTimeInMillis());
        beforeShiftStart.add(Calendar.MINUTE, -(s.getInterval()));
@@ -225,42 +225,25 @@ public class Punch {
         
         return punchTypeId;
     }
+    
+    private String currentStatus() {
+        switch (punchTypeId) {
+            case 0: return "#" + badgeId + " CLOCKED OUT: ";
+            case 1: return "#" + badgeId + " CLOCKED IN: ";
+            default: return "#" + badgeId + " TIMED OUT: ";
+        }
+    }
+    
     public String printAdjustedTimestamp(){
     
-        
         String adj = new SimpleDateFormat("EEE MM/dd/YYYY HH:mm:ss").format(adjusted.getTime()).toUpperCase();
      
-        String Status = "";
-
-       if (punchTypeId == 1) {
-            Status = " CLOCKED IN: ";
-
-        } else if (punchTypeId == 0) {
-            Status = " CLOCKED OUT: ";
-
-        } else {
-            Status = " TIMED OUT: ";
-        }
-
-        return "#" + badgeId + Status + adj + " " +eventData;
-    
+        return currentStatus() + adj + " " + eventData;
     }
     
     public String printOriginalTimestamp() {
-
-        String Status = "";
-
-        if (punchTypeId == 1) {
-            Status = " CLOCKED IN: ";
-
-        } else if (punchTypeId == 0) {
-            Status = " CLOCKED OUT: ";
-
-        } else {
-            Status = " TIMED OUT: ";
-        }
-
-        return "#" + badgeId + Status + sdf;
+        
+        return currentStatus() + sdf;
     }
 }
    
