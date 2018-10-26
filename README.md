@@ -1,4 +1,4 @@
-# cs310-Attendance-tracker
+# CS310-Attendance-tracker
 
 # Authors: Jacob O'Dell, Shauntara Green, Zeth Malcom, Andrew Blair, Christopher Holt, Derrick Godwin
 
